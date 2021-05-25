@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "243541122264",
+    "project_id": "instagramclone-kotlin-ee967",
+    "storage_bucket": "instagramclone-kotlin-ee967.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243541122264:android:80e5ce0a14fa154b7ecbad",
+        "android_client_info": {
+          "package_name": "org.techtown.howistagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "243541122264-9oiq6onembnmecpqtrvk8n3t7drfeeh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg6H1_EOiBpeA-f3IIGg-gfJWEbWg9brs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "243541122264-9oiq6onembnmecpqtrvk8n3t7drfeeh5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
