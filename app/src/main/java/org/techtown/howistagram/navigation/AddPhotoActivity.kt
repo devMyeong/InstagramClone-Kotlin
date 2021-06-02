@@ -82,7 +82,7 @@ class AddPhotoActivity : AppCompatActivity() {
             contentDTO.uid = auth?.currentUser?.uid
 
             //Insert userId
-            contentDTO.userId = auth?.currentUser?.uid
+            contentDTO.userId = auth?.currentUser?.email
 
             //Insert explain of content
             contentDTO.explain = addphoto_edit_explain.text.toString()
