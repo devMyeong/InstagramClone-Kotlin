@@ -43,25 +43,25 @@ class UserFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         currentUserUid = auth?.currentUser?.uid
 
-        if (uid == currentUserUid) {
+        if(uid == currentUserUid){
             //MyPage
             fragmentView?.account_btn_follow_signout?.text = getString(R.string.signout)
             fragmentView?.account_btn_follow_signout?.setOnClickListener {
                 activity?.finish()
-                startActivity(Intent(activity, LoginActivity::class.java))
+                startActivity(Intent(activity,LoginActivity::class.java))
                 auth?.signOut()
             }
-        } else {
+        }else{
             //OtherUserPage
             fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
-            var mainactivty = (activity as MainActivity)
-            mainactivty?.toolbar_username?.text = arguments?.getString("userId")
-            mainactivty?.toolbar_btn_back?.setOnClickListener {
-                mainactivty.bottom_navigation.selectedItemId = R.id.action_home
+            var mainactivity = (activity as MainActivity)
+            mainactivity?.toolbar_username?.text = arguments?.getString("userId")
+            mainactivity?.toolbar_btn_back?.setOnClickListener {
+                mainactivity.bottom_navigation.selectedItemId = R.id.action_home
             }
-            mainactivty?.toolbar_title_image?.visibility = View.GONE
-            mainactivty?.toolbar_username?.visibility = View.VISIBLE
-            mainactivty?.toolbar_btn_back?.visibility = View.VISIBLE
+            mainactivity?.toolbar_title_image?.visibility = View.GONE
+            mainactivity?.toolbar_username?.visibility = View.VISIBLE
+            mainactivity?.toolbar_btn_back?.visibility = View.VISIBLE
             fragmentView?.account_btn_follow_signout?.setOnClickListener {
                 requestFollow()
             }
@@ -86,11 +86,12 @@ class UserFragment : Fragment() {
             if(followDTO?.followingCount != null){
                 fragmentView?.account_tv_following_count?.text = followDTO?.followingCount?.toString()
             }
-            if(followDTO?.followingCount != null){
-                fragmentView?.account_tv_follower_count?.text = followDTO?.followingCount?.toString()
+            if(followDTO?.followerCount != null){
+                fragmentView?.account_tv_follower_count?.text = followDTO?.followerCount?.toString()
                 if(followDTO?.followers?.containsKey(currentUserUid!!)){
                     fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow_cancel)
-                    fragmentView?.account_btn_follow_signout?.background?.setColorFilter(ContextCompat.getColor(requireActivity(),R.color.colorLightGray), PorterDuff.Mode.MULTIPLY)
+                    fragmentView?.account_btn_follow_signout?.background
+                            ?.setColorFilter(ContextCompat.getColor(requireActivity(),R.color.colorLightGray),PorterDuff.Mode.MULTIPLY)
                 }else{
                     if(uid != currentUserUid){
                         fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
@@ -106,47 +107,48 @@ class UserFragment : Fragment() {
         var tsDocFollowing = firestore?.collection("users")?.document(currentUserUid!!)
         firestore?.runTransaction { transaction ->
             var followDTO = transaction.get(tsDocFollowing!!).toObject(FollowDTO::class.java)
-            if (followDTO == null) {
+            if(followDTO == null){
                 followDTO = FollowDTO()
                 followDTO!!.followingCount = 1
-                followDTO!!.followers[uid!!] = true
+                followDTO!!.followings[uid!!] = true
 
-                transaction.set(tsDocFollowing, followDTO)
+                transaction.set(tsDocFollowing,followDTO!!)
                 return@runTransaction
             }
 
             if(followDTO.followings.containsKey(uid)){
                 //It remove following third person when a third person follow me
                 followDTO?.followingCount = followDTO?.followingCount - 1
-                followDTO?.followers?.remove(uid)
+                followDTO?.followings.remove(uid)
             }else{
                 //It add following third person when a third person do not follow me
                 followDTO?.followingCount = followDTO?.followingCount + 1
-                followDTO?.followers[uid!!] = true
+                followDTO?.followings[uid!!] = true
             }
             transaction.set(tsDocFollowing,followDTO)
             return@runTransaction
         }
-        //Save data to third person
+
+        //Save data to third account
+
         var tsDocFollower = firestore?.collection("users")?.document(uid!!)
         firestore?.runTransaction { transaction ->
             var followDTO = transaction.get(tsDocFollower!!).toObject(FollowDTO::class.java)
             if(followDTO == null){
                 followDTO = FollowDTO()
-                followDTO!!.followCount = 1
+                followDTO!!.followerCount = 1
                 followDTO!!.followers[currentUserUid!!] = true
-
                 transaction.set(tsDocFollower,followDTO!!)
                 return@runTransaction
             }
 
-            if(followDTO!!.followers.containsKey(currentUserUid)){
+            if(followDTO!!.followers.containsKey(currentUserUid!!)){
                 //It cancel my follower when I follow a third person
-                followDTO!!.followCount = followDTO!!.followCount - 1
-                followDTO!!.followers.remove(currentUserUid)
+                followDTO!!.followerCount = followDTO!!.followerCount - 1
+                followDTO!!.followers.remove(currentUserUid!!)
             }else{
                 //It add my follower when I don't follow a third person
-                followDTO!!.followingCount = followDTO!!.followingCount + 1
+                followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUserUid!!] = true
             }
             transaction.set(tsDocFollower,followDTO!!)
